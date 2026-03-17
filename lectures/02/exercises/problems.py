@@ -1,4 +1,3 @@
-
 """Lecture 02 exercises (classes) - implement from scratch.
 Any 14 / 16 problems solved count as 100%
 """
@@ -8,6 +7,14 @@ Any 14 / 16 problems solved count as 100%
     name,
     method say_hi() which prints "Hello, I am {name}"
 """
+
+
+class User:
+    def __init__(self, name: str) -> None:
+        pass
+
+    def say_hi(self):
+        pass
 
 
 """
@@ -23,6 +30,17 @@ Rules:
 """
 
 
+class BankAccount:
+    def __init__(self, owner: str, balance: float = 0.0) -> None:
+        pass
+
+    def deposit(self, amount: float) -> None:
+        pass
+
+    def withdraw(self, amount: float) -> None:
+        pass
+
+
 """
 3) Team
 Create class `Team` with:
@@ -33,6 +51,18 @@ Rules:
 - Members are stored in insertion order.
 - Each instance has independent member storage.
 """
+
+
+class Team:
+    def __init__(self) -> None:
+        pass
+
+    def add(self, name: str) -> None:
+        pass
+
+    def __len__(self) -> int:
+        pass
+
 
 """ (Advanced, optional)
 5) QueueState
@@ -45,6 +75,17 @@ Rules:
 - FIFO behavior.
 - `pop` returns `None` when empty.
 """
+
+
+class QueueState:
+    def __init__(self) -> None:
+        pass
+
+    def push(self, item: str) -> None:
+        pass
+
+    def pop(self) -> str | None:
+        pass
 
 
 """ (Advanced, optional)
@@ -63,6 +104,27 @@ Rules:
 """
 
 
+class PaymentError(Exception):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class InsufficientFunds(PaymentError):
+    def __init__(self, *args: object) -> None:
+        super().__init__(*args)
+
+
+class Wallet:
+    def __init__(self) -> None:
+        pass
+
+    def top_up(self, amount: float) -> None:
+        pass
+
+    def pay(self, amount: float) -> None:
+        pass
+
+
 """
 7) ShoppingCart
 Create class `ShoppingCart` with:
@@ -74,6 +136,20 @@ Rules:
 - `price < 0` or `qty <= 0` items are ignored.
 - `repr` must include `ShoppingCart`.
 """
+
+
+class ShoppingCart:
+    def __init__(self) -> None:
+        pass
+
+    def add_item(self, name: str, price: float, qty: int = 1) -> None:
+        pass
+
+    def total_items(self) -> int:
+        pass
+
+    def total_price(self) -> float:
+        pass
 
 
 """
@@ -90,6 +166,22 @@ Rules:
 """
 
 
+class Classroom:
+    school_name = "Harbour Space"
+
+    def __init__(self) -> None:
+        pass
+
+    def add_student(self, name: str) -> None:
+        pass
+
+    def __len__(self) -> int:
+        pass
+
+    def set_school_name(self, new_name: str) -> None:
+        pass
+
+
 """
 9) Rectangle
 Create class `Rectangle` with:
@@ -99,6 +191,17 @@ Create class `Rectangle` with:
 Rules:
 - Store positive dimensions using absolute values.
 """
+
+
+class Rectangle:
+    def __init__(self, width: float, height: float) -> None:
+        pass
+
+    def area(self) -> float:
+        pass
+
+    def perimeter(self) -> float:
+        pass
 
 
 """
@@ -114,6 +217,23 @@ Rules:
 """
 
 
+class Playlist:
+    def __init__(self) -> None:
+        pass
+
+    def add(self, song: str) -> None:
+        pass
+
+    def __len__(self) -> int:
+        pass
+
+    def __iter__(self):
+        pass
+
+    def __contains__(self, song: str) -> bool:
+        pass
+
+
 """
 11) Product
 Create class `Product` with:
@@ -127,6 +247,20 @@ Rules:
 """
 
 
+class Product:
+    def __init__(self, name: str, price: float) -> None:
+        pass
+
+    def get_price(self) -> float:
+        pass
+
+    def set_price(self, value: float) -> None:
+        pass
+
+    def apply_discount(self, percent: float) -> None:
+        pass
+
+
 """
 12) Person + Student (inheritance)
 Create:
@@ -136,10 +270,24 @@ Required format:
 - `Person(name=Ana)`
 - `Student(name=Bo, group=G2)`
 """
-"""
 
 
-"""
+class Person:
+    def __init__(self, name) -> None:
+        pass
+
+    def describe(self):
+        pass
+
+
+class Student(Person):
+    def __init__(self, name, group) -> None:
+        super().__init__(name)
+
+    def describe(self):
+        return super().describe()  # ? override?
+
+
 """
 13) Point2D (magic methods)
 Create class `Point2D` with:
@@ -150,6 +298,17 @@ Rules:
 - Euclidean distance.
 - `repr` format: `Point2D(x, y)`.
 """
+
+
+class Point2D:
+    def __init__(self, x: float, y: float) -> None:
+        pass
+
+    def distance_to(self, other: "Point2D") -> float:
+        pass
+
+    def __eq__(self, other: object) -> bool:
+        pass
 
 
 """
@@ -167,6 +326,26 @@ Rules:
 """
 
 
+class Inventory:
+    def __init__(self) -> None:
+        pass
+
+    def add(self, name: str, qty: int = 1) -> None:
+        pass
+
+    def remove(self, name: str, qty: int = 1) -> None:
+        pass
+
+    def count(self, name: str) -> int:
+        pass
+
+    def __contains__(self, name: str) -> bool:
+        pass
+
+    def __len__(self) -> int:
+        pass
+
+
 """
 15) CourseCatalog
 Create class `CourseCatalog` with:
@@ -176,6 +355,23 @@ Create class `CourseCatalog` with:
 - `__iter__(self)` returning `(code, title)` sorted by code
 - `__len__(self) -> int`
 """
+
+
+class CourseCatalog:
+    def __init__(self) -> None:
+        pass
+
+    def add_course(self, code: str, title: str) -> None:
+        pass
+
+    def get_title(self, code: str) -> str | None:
+        pass
+
+    def __iter__(self):
+        pass
+
+    def __len__(self) -> int:
+        pass
 
 
 """
@@ -192,3 +388,20 @@ Rules:
   - otherwise create value using `default_factory()`, store, return.
 - If `default_factory` is not callable, treat it as `None`.
 """
+
+
+class DefaultDict:
+    def __init__(self, default_factory=None) -> None:
+        pass
+
+    def __getitem__(self, key):
+        pass
+
+    def __setitem__(self, key, value) -> None:
+        pass
+
+    def __contains__(self, key) -> bool:
+        pass
+
+    def __len__(self) -> int:
+        pass
