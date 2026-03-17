@@ -11,10 +11,10 @@ Any 14 / 16 problems solved count as 100%
 
 class User:
     def __init__(self, name: str) -> None:
-        pass
+        self.name = name
 
     def say_hi(self):
-        pass
+        print(f"Hello, I am {self.name}")
 
 
 """
@@ -32,13 +32,16 @@ Rules:
 
 class BankAccount:
     def __init__(self, owner: str, balance: float = 0.0) -> None:
-        pass
+        self.owner = owner
+        self.balance = balance if balance > 0.0 else 0.0
+
+    # else 0.0 so it's unchanged:
 
     def deposit(self, amount: float) -> None:
-        pass
+        self.balance += amount if amount > 0.0 else 0.0
 
     def withdraw(self, amount: float) -> None:
-        pass
+        self.balance -= amount if self.balance >= amount > 0.0 else 0.0
 
 
 """
@@ -55,13 +58,13 @@ Rules:
 
 class Team:
     def __init__(self) -> None:
-        pass
+        self.members = []
 
     def add(self, name: str) -> None:
-        pass
+        self.members.append(name)
 
     def __len__(self) -> int:
-        pass
+        return len(self.members)
 
 
 """ (Advanced, optional)
@@ -79,13 +82,16 @@ Rules:
 
 class QueueState:
     def __init__(self) -> None:
-        pass
+        self.items = []
 
     def push(self, item: str) -> None:
-        pass
+        self.items.append(item)
 
     def pop(self) -> str | None:
-        pass
+        try:
+            return self.items.pop(0)  # to hell with efficiency
+        except IndexError:
+            return None
 
 
 """ (Advanced, optional)
@@ -115,14 +121,18 @@ class InsufficientFunds(PaymentError):
 
 
 class Wallet:
-    def __init__(self) -> None:
-        pass
+    def __init__(self, balance: float = 0.0) -> None:
+        self.balance = balance if balance >= 0.0 else 0.0
 
     def top_up(self, amount: float) -> None:
-        pass
+        self.balance += amount if amount >= 0.0 else 0.0
 
     def pay(self, amount: float) -> None:
-        pass
+        # self.balance -= amount if self.balance >= amount > 0.0 else 0.0
+        if self.balance >= amount > 0.0:
+            self.balance -= amount
+        else:
+            raise InsufficientFunds
 
 
 """
@@ -140,16 +150,19 @@ Rules:
 
 class ShoppingCart:
     def __init__(self) -> None:
-        pass
+        self.items = []
+        # self.items = {}
 
     def add_item(self, name: str, price: float, qty: int = 1) -> None:
-        pass
+        if price >= 0 and qty > 0:
+            self.items.append({"name": name, "price": price, "qty": qty})
+            # self.items[name] = {"price": price, "qty": qty}
 
     def total_items(self) -> int:
-        pass
+        return sum(item["qty"] for item in self.items)
 
     def total_price(self) -> float:
-        pass
+        return sum(item["price"] * item["qty"] for item in self.items)
 
 
 """
@@ -169,17 +182,18 @@ Rules:
 class Classroom:
     school_name = "Harbour Space"
 
-    def __init__(self) -> None:
-        pass
+    def __init__(self, group_name: str) -> None:
+        self.group_name = group_name
+        self.students = []
 
     def add_student(self, name: str) -> None:
-        pass
+        self.students.append(name)
 
     def __len__(self) -> int:
-        pass
+        return len(self.students)
 
     def set_school_name(self, new_name: str) -> None:
-        pass
+        Classroom.school_name = new_name
 
 
 """
@@ -195,13 +209,14 @@ Rules:
 
 class Rectangle:
     def __init__(self, width: float, height: float) -> None:
-        pass
+        self.width = abs(width)
+        self.height = abs(height)
 
     def area(self) -> float:
-        pass
+        return self.width * self.height
 
     def perimeter(self) -> float:
-        pass
+        return 2 * (self.width + self.height)
 
 
 """
@@ -219,19 +234,19 @@ Rules:
 
 class Playlist:
     def __init__(self) -> None:
-        pass
+        self.songs = []
 
     def add(self, song: str) -> None:
-        pass
+        self.songs.append(song)
 
     def __len__(self) -> int:
-        pass
+        return len(self.songs)
 
-    def __iter__(self):
-        pass
+    def __iter__(self):  # ?
+        return iter(self.songs)
 
     def __contains__(self, song: str) -> bool:
-        pass
+        return song in self.songs
 
 
 """
@@ -249,16 +264,18 @@ Rules:
 
 class Product:
     def __init__(self, name: str, price: float) -> None:
-        pass
+        self.name = name
+        self.price = price if price >= 0 else 0
 
     def get_price(self) -> float:
-        pass
+        return self.price
 
     def set_price(self, value: float) -> None:
-        pass
+        self.price = value if value >= 0 else 0
 
     def apply_discount(self, percent: float) -> None:
-        pass
+        percent = 0 if percent <= 0 else 100 if percent >= 100 else percent
+        self.price -= self.price * (percent / 100)
 
 
 """
@@ -273,19 +290,21 @@ Required format:
 
 
 class Person:
-    def __init__(self, name) -> None:
-        pass
+    def __init__(self, name: str) -> None:
+        self.name = name
 
     def describe(self):
-        pass
+        return f"Person(name={self.name})"
 
 
 class Student(Person):
-    def __init__(self, name, group) -> None:
+    def __init__(self, name, group: str) -> None:
         super().__init__(name)
+        # self.name = name
+        self.group = group
 
     def describe(self):
-        return super().describe()  # ? override?
+        return f"Student(name={self.name}, group={self.group})"
 
 
 """
@@ -302,13 +321,22 @@ Rules:
 
 class Point2D:
     def __init__(self, x: float, y: float) -> None:
-        pass
+        self.x = x
+        self.y = y
 
     def distance_to(self, other: "Point2D") -> float:
-        pass
+        from math import sqrt
+
+        return sqrt(((self.x - other.x) ** 2) + ((self.y - other.y) ** 2))
 
     def __eq__(self, other: object) -> bool:
-        pass
+        if isinstance(other, Point2D):
+            return self.x == other.x and self.y == other.y
+        else:
+            return False
+
+    def __repr__(self) -> str:
+        return f"Point2D({self.x}, {self.y})"
 
 
 """
@@ -328,22 +356,29 @@ Rules:
 
 class Inventory:
     def __init__(self) -> None:
-        pass
+        from collections import Counter
+
+        self.items = Counter()
 
     def add(self, name: str, qty: int = 1) -> None:
-        pass
+        self.items[name] += qty if qty >= 0 else 0
 
     def remove(self, name: str, qty: int = 1) -> None:
-        pass
+        self.items[name] -= qty
+        # so do i have to remove it completely or just have it be 0? lol
+        if self.items[name] <= 0:
+            del self.items[name]
+        # ????
+        # i don't like that but it works moving on
 
     def count(self, name: str) -> int:
-        pass
+        return self.items[name]
 
     def __contains__(self, name: str) -> bool:
-        pass
+        return name in self.items
 
     def __len__(self) -> int:
-        pass
+        return len(self.items)
 
 
 """
@@ -359,19 +394,19 @@ Create class `CourseCatalog` with:
 
 class CourseCatalog:
     def __init__(self) -> None:
-        pass
+        self.courses = {}
 
     def add_course(self, code: str, title: str) -> None:
-        pass
+        self.courses[code] = title
 
     def get_title(self, code: str) -> str | None:
-        pass
+        return self.courses[code]
 
     def __iter__(self):
-        pass
+        return iter(sorted(self.courses.items()))
 
     def __len__(self) -> int:
-        pass
+        return len(self.courses)
 
 
 """
