@@ -427,16 +427,24 @@ Rules:
 
 class DefaultDict:
     def __init__(self, default_factory=None) -> None:
-        pass
+        self.fype = default_factory
+        self.stuff = {}
 
     def __getitem__(self, key):
-        pass
+        try:
+            return self.stuff[key]
+        except KeyError:
+            if callable(self.fype):
+                self.__setitem__(key, self.fype())
+                return self.stuff[key]
+            else:
+                return None
 
     def __setitem__(self, key, value) -> None:
-        pass
+        self.stuff[key] = value
 
     def __contains__(self, key) -> bool:
-        pass
+        return key in self.stuff
 
     def __len__(self) -> int:
-        pass
+        return len(self.stuff)
