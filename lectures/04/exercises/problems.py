@@ -42,7 +42,17 @@ def log_calls(func: Callable[..., Any]) -> Callable[..., Any]:
     add(2, 3) -> 5
     5
     """
-    raise NotImplementedError
+
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        youter = func(*args, **kwargs)
+
+        arguers = (*(str(b) for b in args), *(f"{k}={v}" for k, v in kwargs.items()))
+        # blegh no lazy evaulation
+        print(f"{func.__name__}({', '.join(arguers)}) -> {youter}")
+
+        return youter
+
+    return wrapper
 
 
 def measure_time(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -62,7 +72,17 @@ def measure_time(func: Callable[..., Any]) -> Callable[..., Any]:
     >>> work()
     done
     """
-    raise NotImplementedError
+
+    from time import perf_counter_ns
+
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        start = perf_counter_ns()
+        result = func(*args, **kwargs)
+        elapsed = perf_counter_ns() - start
+        print(f"Executed in {elapsed / 1000000} ms")
+        return result
+
+    return wrapper
 
 
 def count_calls(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -95,7 +115,18 @@ def ensure_non_negative(func: Callable[..., Any]) -> Callable[..., Any]:
     >>> diff(5, 2)
     3
     """
-    raise NotImplementedError
+
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        result = func(*args, **kwargs)
+
+        # because it doesn't specify that it actually has to be a number
+        # only that it's invalid if it is a number and negative lol
+        if isinstance(result, (int, float)) and result < 0:
+            raise ValueError
+        else:
+            return result
+
+    return wrapper
 
 
 class Retry:
