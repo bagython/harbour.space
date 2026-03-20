@@ -19,6 +19,7 @@ Problems:
 
 from __future__ import annotations
 
+import time
 from collections.abc import Callable
 from typing import Any
 
@@ -73,13 +74,11 @@ def measure_time(func: Callable[..., Any]) -> Callable[..., Any]:
     done
     """
 
-    from time import perf_counter_ns
-
     def wrapper(*args: Any, **kwargs: Any) -> Any:
-        start = perf_counter_ns()
+        start = time.perf_counter()
         result = func(*args, **kwargs)
-        elapsed = perf_counter_ns() - start
-        print(f"Executed in {elapsed / 1000000} ms")
+        elapsed = time.perf_counter() - start
+        print(f"Executed in {elapsed * 1000} ms")
         return result
 
     return wrapper
@@ -100,7 +99,14 @@ def count_calls(func: Callable[..., Any]) -> Callable[..., Any]:
     >>> ping.calls
     2
     """
-    raise NotImplementedError
+
+    def wrapper(*args: Any, **kwargs: Any) -> Any:
+        wrapper.calls += 1  # pyright: ignore[reportFunctionMemberAccess]
+        return func(*args, **kwargs)
+
+    wrapper.calls = 0  # pyright: ignore[reportFunctionMemberAccess]
+
+    return wrapper
 
 
 def ensure_non_negative(func: Callable[..., Any]) -> Callable[..., Any]:
@@ -146,10 +152,24 @@ class Retry:
     """
 
     def __init__(self, times: int) -> None:
-        raise NotImplementedError
+        self.times = times
+        if times < 0:
+            raise ValueError
 
     def __call__(self, func: Callable[..., Any]) -> Callable[..., Any]:
-        raise NotImplementedError
+        times_left = self.times  # it says after the initial attempt
+
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            nonlocal times_left  # ?
+
+            for i in range(times_left):
+                try:
+                    return func(*args, **kwargs)
+
+                except:
+                    continue
+
+        return wrapper
 
 
 class Throttle:
@@ -187,7 +207,25 @@ class Throttle:
     - Implement this as a class decorator
     """
 
-    pass
+    def __init__(self, interval: float) -> None:
+        if interval < 0:
+            raise ValueError()
+        self.interval = interval
+
+    def __call__(self, func: Callable[..., Any]) -> Callable[..., Any]:
+        last_called = -float("inf")
+
+        def wrapper(*args: Any, **kwargs: Any) -> Any:
+            nonlocal last_called  # ?
+
+            rntime = time.perf_counter()
+            if rntime - last_called >= self.interval:
+                last_called = rntime
+                return func(*args, **kwargs)
+            else:
+                raise RuntimeError("Too many calls")
+
+        return wrapper
 
 
 class CallLimit:
