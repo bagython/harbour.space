@@ -11,19 +11,41 @@ Run:
     ngrok http 8000
 """
 
+import datetime
+from uuid import UUID
+
 from fastapi import FastAPI
-from pydantic import BaseModel
+from pydantic import BaseModel, HttpUrl
 
 app = FastAPI()
 
 
 class MessageIn(BaseModel):
-    # TODO: add fields
-    pass
+    sender_name: str = "Anonymous"
+    sent_timestamp: datetime.datetime
+    id: UUID
+    contents: str
+    attachments: list[HttpUrl]
+
+
+class MessageOut(BaseModel):
+    status: str
+    received_timestamp: datetime.datetime
+    received_id: UUID
+    attachments_count: int
 
 
 @app.post("/messages")
-def receive_message(payload: MessageIn) -> dict[str, str]:
-    # TODO: print message details to console
-    # TODO: return status response
-    raise NotImplementedError
+def receive_message(payload: MessageIn) -> MessageOut:
+    # so if i understand correctly i can assume fastapi already
+    # validated the model so i don't need to
+    # check the actual status type shiiiit
+
+    print(payload.model_dump_json(indent=4))
+
+    return MessageOut(
+        status="received",
+        received_timestamp=datetime.datetime.now(),
+        received_id=payload.id,
+        attachments_count=len(payload.attachments),
+    )

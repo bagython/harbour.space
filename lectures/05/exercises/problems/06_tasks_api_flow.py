@@ -10,32 +10,44 @@ Optional:
 - Add GET /tasks/{task_id} with 404 for missing task
 """
 
-from fastapi import FastAPI, status
+from fastapi import FastAPI, HTTPException, status
 from pydantic import BaseModel
 
 app = FastAPI()
 
 
 class TaskIn(BaseModel):
-    # TODO: add fields
-    pass
+    title: str
+    completed: bool = False
 
 
 class TaskOut(BaseModel):
-    # TODO: add id + task fields
-    pass
+    id: int
+    title: str
+    completed: bool
 
 
-# TODO: create in-memory storage and next_id counter
+tasks: dict[int, TaskOut] = {}
+next_id = 0
 
 
 @app.post("/tasks", response_model=TaskOut, status_code=status.HTTP_201_CREATED)
 def create_task(payload: TaskIn) -> TaskOut:
-    # TODO: create/store/return task
-    raise NotImplementedError
+    global next_id
+    task = TaskOut(id=next_id, **payload.model_dump())
+    tasks[next_id] = task
+    next_id += 1
+    return task
 
 
 @app.get("/tasks", response_model=list[TaskOut])
 def get_tasks() -> list[TaskOut]:
-    # TODO: return all tasks
-    raise NotImplementedError
+    return list(tasks.values())
+
+
+@app.get("/task")
+def get_task(id: int) -> TaskOut:
+    try:
+        return tasks[id]
+    except KeyError:
+        raise HTTPException(404)

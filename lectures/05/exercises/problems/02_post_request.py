@@ -18,10 +18,23 @@ URL = "https://jsonplaceholder.typicode.com/posts"
 
 
 def main() -> None:
-    # TODO: create payload dict
-    # TODO: send POST request with json=payload
-    # TODO: print response details
-    pass
+
+    payload = {"title": "totl", "body": "bad", "userId": 67}
+
+    print(payload)
+
+    response = requests.post(URL, json=payload)
+
+    print(
+        response.status_code,
+        response.text,
+        response.json(),
+        f"my data in response? {all(response.json().get(k, None) == v for k, v in payload.items())}",
+        f"id: {response.json()['id']}",
+        sep="\n",
+    )
+
+    print()
 
 
 if __name__ == "__main__":
